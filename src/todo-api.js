@@ -9,3 +9,7 @@ export async function getList() {
 export async function insertTodo(object) {
     return await request.post(URL, object)
 }
+
+export async function toggleDBItem(object) {
+    await request.put(`${URL}/${object.id}`, object)
+}
