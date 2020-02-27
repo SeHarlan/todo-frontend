@@ -6,22 +6,20 @@ import TodoDetail from './TodoDetail.js';
 export default class List extends Component {
     state = {
         list: [],
-        input: ''
+        input: '',
+        currentUser: this.props.currentUser
     }
-
     async componentDidMount() {
-        const data = await getList();
+        const data = await getList(this.state.currentUser);
         this.setState( { list: data.body })
     }
-
     handleInput = (e) => {
         this.setState({ input: e.target.value})
     }
-
     handleSubmit = async(e) => {
         e.preventDefault();
         const newTodo = { task: this.state.input, complete: false}
-        const returnedTodo = await insertTodo(newTodo); 
+        const returnedTodo = await insertTodo(newTodo, this.state.currentUser); 
         const newList = [...this.state.list, returnedTodo.body]
         this.setState({ list: newList})
     }
@@ -29,10 +27,10 @@ export default class List extends Component {
         const newTodos = this.state.list.slice();
         const targetId = Number(e.target.id.split('_')[1]);
         const match = newTodos.find(thisTodo => thisTodo.id === targetId)
-        console.log(match);
+    
         match.complete = !match.complete;
         this.setState({list: newTodos})
-        toggleDBItem(match);
+        toggleDBItem(match, this.state.currentUser);
     }
     render() {
         const listNode = this.state.list.map(todo => 

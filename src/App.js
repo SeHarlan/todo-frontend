@@ -3,6 +3,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
+  Redirect
 } from 'react-router-dom';
 import './App.css'
 
@@ -11,14 +12,28 @@ import List from './List.js';
 import Login from './Login.js'
 
 export default class App extends Component {
+  state = {
+    currentUser: ''
+  }
+
+  
+  getUserProp = (user) => {
+    this.setState({ currentUser: user})
+  }
+
+
   render() {
     return (
       <div className='app'>
-        <Header />
+        <Header email={this.state.currentUser.email} />
         <Router>
           <Switch>
-            <Route path="/todos" component={List} />
-            <Route path="/" component={Login} />
+            <Route exact path="/" render={() =>
+              this.state.currentUser ? <List currentUser={this.state.currentUser} /> : <Redirect to='/login' />
+            } />
+            <Route exact path="/login" 
+            render={(routerProps) => <Login routerProps={routerProps} currentUser={this.state.currentUser} getUserProp={this.getUserProp} />}
+            />
 
           </Switch>
         </Router>
